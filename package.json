@@ -1,30 +1,26 @@
 {
-  "name": "nodebb-plugin-sso-oauth",
+  "name": "nodebb-plugin-sso-gitlab",
   "version": "0.3.4",
-  "description": "NodeBB Generic OAuth SSO",
+  "description": "NodeBB Gitlab OAuth SSO",
   "main": "library.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/julianlam/nodebb-plugin-sso-oauth"
+    "url": "https://github.com/rfc2822/nodebb-plugin-sso-gitlab"
   },
   "keywords": [
     "nodebb",
     "plugin",
-    "oauth",
-    "oauth2",
+    "gitlab",
     "sso",
     "single sign on",
     "login",
     "registration"
   ],
   "author": {
-    "name": "Julian Lam",
-    "email": "julian@nodebb.org"
+    "name": "Ricki Hirner",
+    "email": "hirner@bitfire.at"
   },
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/julianlam/nodebb-plugin-sso-oauth/issues"
-  },
   "readme": "",
   "readmeFilename": "README.md",
   "dependencies": {
