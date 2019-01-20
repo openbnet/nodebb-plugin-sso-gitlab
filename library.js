@@ -47,8 +47,8 @@
 	 */
 
 	const constants = Object.freeze({
-		type: '',	// Either 'oauth' or 'oauth2'
-		name: '',	// Something unique to your OAuth provider in lowercase, like "github", or "nodebb"
+		type: 'oauth2',	// Either 'oauth' or 'oauth2'
+		name: 'gitlab',	// Something unique to your OAuth provider in lowercase, like "github", or "nodebb"
 		oauth: {
 			requestTokenURL: '',
 			accessTokenURL: '',
@@ -57,12 +57,12 @@
 			consumerSecret: nconf.get('oauth:secret'),	// don't change this line
 		},
 		oauth2: {
-			authorizationURL: '',
-			tokenURL: '',
+			authorizationURL: 'https://gitlab.com/oauth/authorize',
+			tokenURL: 'https://gitlab.com/oauth/token',
 			clientID: nconf.get('oauth:id'),	// don't change this line
 			clientSecret: nconf.get('oauth:secret'),	// don't change this line
 		},
-		userRoute: '',	// This is the address to your app's "user profile" API endpoint (expects JSON)
+		userRoute: 'https://gitlab.com/api/v4/user',	// This is the address to your app's "user profile" API endpoint (expects JSON)
 	});
 
 	const OAuth = {};
@@ -156,7 +156,7 @@
 				name: constants.name,
 				url: '/auth/' + constants.name,
 				callbackURL: '/auth/' + constants.name + '/callback',
-				icon: 'fa-check-square',
+				icon: 'fa-gitlab',
 				scope: (constants.scope || '').split(','),
 			});
 
