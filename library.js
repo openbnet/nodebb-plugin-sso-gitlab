@@ -57,12 +57,12 @@
 			consumerSecret: nconf.get('oauth:secret'),	// don't change this line
 		},
 		oauth2: {
-			authorizationURL: 'https://gitlab.com/oauth/authorize',
-			tokenURL: 'https://gitlab.com/oauth/token',
+			authorizationURL: 'https://git.activ.ltd/oauth/authorize',
+			tokenURL: 'https://git.activ.ltd/oauth/token',
 			clientID: nconf.get('oauth:id'),	// don't change this line
 			clientSecret: nconf.get('oauth:secret'),	// don't change this line
 		},
-		userRoute: 'https://gitlab.com/api/v4/user',	// This is the address to your app's "user profile" API endpoint (expects JSON)
+		userRoute: 'https://git.activ.ltd/api/v4/user',	// This is the address to your app's "user profile" API endpoint (expects JSON)
 	});
 
 	const OAuth = {};
