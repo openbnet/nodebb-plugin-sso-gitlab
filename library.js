@@ -63,6 +63,7 @@
 			clientSecret: nconf.get('oauth:secret'),	// don't change this line
 		},
 		userRoute: 'https://git.activ.ltd/api/v4/user',	// This is the address to your app's "user profile" API endpoint (expects JSON)
+		scope: 'read_user'
 	});
 
 	const OAuth = {};
