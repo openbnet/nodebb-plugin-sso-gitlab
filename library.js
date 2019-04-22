@@ -63,6 +63,7 @@
 			clientSecret: nconf.get('oauth:secret'),	// don't change this line
 		},
 		userRoute: 'https://git.openb.net/api/v4/user',	// This is the address to your app's "user profile" API endpoint (expects JSON)
+		scope: 'read_user'
 	});
 
 	const OAuth = {};
@@ -180,11 +181,11 @@
 		profile.emails = [{ value: data.email }];
 
 		// Do you want to automatically make somebody an admin? This line might help you do that...
-		// profile.isAdmin = data.isAdmin ? true : false;
+		profile.isAdmin = data.is_admin ? true : false;
 
 		// Delete or comment out the next TWO (2) lines when you are ready to proceed
-		process.stdout.write('===\nAt this point, you\'ll need to customise the above section to id, displayName, and emails into the "profile" object.\n===');
-		return callback(new Error('Congrats! So far so good -- please see server log for details'));
+		// process.stdout.write('===\nAt this point, you\'ll need to customise the above section to id, displayName, and emails into the "profile" object.\n===');
+		// return callback(new Error('Congrats! So far so good -- please see server log for details'));
 
 		// eslint-disable-next-line
 		callback(null, profile);
