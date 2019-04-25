@@ -1,4 +1,5 @@
 # NodeBB OAuth SSO
+For openb.net
 
 NodeBB Plugin that allows users to login/register via any configured OAuth provider. **Please note** that this is not a complete plugin, but merely a skeleton with which you can create your own OAuth SSO plugin for NodeBB (and hopefully share it with others!)
 

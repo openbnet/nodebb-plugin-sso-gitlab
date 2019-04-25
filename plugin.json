@@ -1,7 +1,7 @@
 {
-	"id": "nodebb-plugin-sso-oauth",
-	"name": "NodeBB OAuth SSO",
-	"description": "NodeBB Plugin that allows users to login/register via any configured OAuth provider.",
+	"id": "nodebb-plugin-sso-gitlab-openb",
+	"name": "NodeBB OAuth gitlab openb",
+	"description": "gitlab-openb oauth",
 	"url": "https://github.com/openbnet/nodebb-plugin-sso-gitlab",
 	"library": "./library.js",
 	"hooks": [

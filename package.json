@@ -1,5 +1,5 @@
 {
-  "name": "nodebb-plugin-sso-gitlab",
+  "name": "nodebb-plugin-sso-gitlab-openb",
   "version": "0.3.3",
   "description": "NodeBB Gitlab OAuth SSO",
   "main": "library.js",
@@ -17,8 +17,8 @@
     "registration"
   ],
   "author": {
-    "name": "Ricki Hirner",
-    "email": "hirner@bitfire.at"
+    "name": "Hansel Ke",
+    "email": "hansel@openb.net"
   },
   "license": "MIT",
   "readme": "",
