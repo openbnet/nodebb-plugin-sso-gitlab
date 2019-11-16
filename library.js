@@ -49,6 +49,8 @@
 	const constants = Object.freeze({
 		type: 'oauth2',	// Either 'oauth' or 'oauth2'
 		name: 'gitlab',	// Something unique to your OAuth provider in lowercase, like "github", or "nodebb"
+		displayName: 'Gitlab',
+		icon: 'fa-gitlab',
 		oauth2: {
 			authorizationURL: 'https://gitlab.com/oauth/authorize',
 			tokenURL: 'https://gitlab.com/oauth/token',
@@ -73,6 +75,22 @@
 	} else {
 		configOk = true;
 	}
+
+	OAuth.init = function (data, callback) {
+		hostHelpers.setupPageRoute(data.router, '/deauth/' + constants.name, data.middleware, [data.middleware.requireUser], function (req, res) {
+			OAuth.deleteUserData({
+				uid: req.user.uid,
+			}, function (err) {
+				if (err) {
+					return next(err);
+				}
+
+				res.redirect(nconf.get('relative_path') + '/me/edit');
+			});
+		});
+
+		callback();
+	};
 
 	OAuth.getStrategy = function (strategies, callback) {
 		if (configOk) {
@@ -150,7 +168,7 @@
 				name: constants.name,
 				url: '/auth/' + constants.name,
 				callbackURL: '/auth/' + constants.name + '/callback',
-				icon: 'fa-gitlab',
+				icon: constants.icon,
 				scope: (constants.scope || '').split(','),
 			});
 
@@ -262,6 +280,30 @@
 				return callback(err);
 			}
 
+			callback(null, data);
+		});
+	};
+
+	OAuth.getAssociation = function (data, callback) {
+		User.getUserField(data.uid, constants.name + 'Id', function (err, oauthId) {
+			if (err) {
+				return callback(err, data);
+			}
+			if (oauthId) {
+				data.associations.push({
+					associated: true,
+					name: constants.displayName,
+					icon: constants.icon,
+					deauthUrl: nconf.get('url') + '/deauth/' + constants.name,
+				});
+			} else {
+				data.associations.push({
+					associated: false,
+					url: nconf.get('url') + '/auth/' + constants.name,
+					name: constants.displayName,
+					icon: constants.icon,
+				});
+			}
 			callback(null, data);
 		});
 	};
