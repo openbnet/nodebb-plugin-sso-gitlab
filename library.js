@@ -77,7 +77,14 @@
 	}
 
 	OAuth.init = function (data, callback) {
+		var hostHelpers = require.main.require('./src/routes/helpers');
+
 		hostHelpers.setupPageRoute(data.router, '/deauth/' + constants.name, data.middleware, [data.middleware.requireUser], function (req, res) {
+			res.render('plugins/sso-gitlab/deauth', {
+				service: constants.displayName,
+			});
+		});
+		data.router.post('/deauth/' + constants.name, [data.middleware.requireUser, data.middleware.applyCSRF], function (req, res, next) {
 			OAuth.deleteUserData({
 				uid: req.user.uid,
 			}, function (err) {
@@ -274,6 +281,7 @@
 			function (oAuthIdToDelete, next) {
 				db.deleteObjectField(constants.name + 'Id:uid', oAuthIdToDelete, next);
 			},
+			async.apply(db.deleteObjectField, 'user:' + data.uid, constants.name + 'Id'),
 		], function (err) {
 			if (err) {
 				winston.error('[sso-oauth] Could not remove OAuthId data for uid ' + data.uid + '. Error: ' + err);

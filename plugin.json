@@ -10,5 +10,6 @@
 		{ "hook": "filter:user.whitelistFields", "method": "whitelistFields" },
 		{ "hook": "filter:auth.init", "method": "getStrategy" },
 		{ "hook": "filter:auth.list", "method": "getAssociation" }
-	]
+	],
+	"templates": "./templates"
 }
