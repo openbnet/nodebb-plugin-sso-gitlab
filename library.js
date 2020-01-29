@@ -49,13 +49,6 @@
 	const constants = Object.freeze({
 		type: 'oauth2',	// Either 'oauth' or 'oauth2'
 		name: 'gitlab',	// Something unique to your OAuth provider in lowercase, like "github", or "nodebb"
-		oauth: {
-			requestTokenURL: '',
-			accessTokenURL: '',
-			userAuthorizationURL: '',
-			consumerKey: nconf.get('oauth:key'),	// don't change this line
-			consumerSecret: nconf.get('oauth:secret'),	// don't change this line
-		},
 		oauth2: {
 			authorizationURL: 'https://git.openb.net/oauth/authorize',
 			tokenURL: 'https://git.openb.net/oauth/token',
@@ -63,7 +56,7 @@
 			clientSecret: nconf.get('oauth:secret'),	// don't change this line
 		},
 		userRoute: 'https://git.openb.net/api/v4/user',	// This is the address to your app's "user profile" API endpoint (expects JSON)
-		scope: 'read_user'
+		scope: 'openid read_user'
 	});
 
 	const OAuth = {};
@@ -80,6 +73,29 @@
 	} else {
 		configOk = true;
 	}
+
+	OAuth.init = function (data, callback) {
+		var hostHelpers = require.main.require('./src/routes/helpers');
+
+		hostHelpers.setupPageRoute(data.router, '/deauth/' + constants.name, data.middleware, [data.middleware.requireUser], function (req, res) {
+			res.render('plugins/sso-gitlab/deauth', {
+				service: constants.displayName,
+			});
+		});
+		data.router.post('/deauth/' + constants.name, [data.middleware.requireUser, data.middleware.applyCSRF], function (req, res, next) {
+			OAuth.deleteUserData({
+				uid: req.user.uid,
+			}, function (err) {
+				if (err) {
+					return next(err);
+				}
+
+				res.redirect(nconf.get('relative_path') + '/me/edit');
+			});
+		});
+
+		callback();
+	};
 
 	OAuth.getStrategy = function (strategies, callback) {
 		if (configOk) {
@@ -157,7 +173,7 @@
 				name: constants.name,
 				url: '/auth/' + constants.name,
 				callbackURL: '/auth/' + constants.name + '/callback',
-				icon: 'fa-gitlab',
+				icon: constants.icon,
 				scope: (constants.scope || '').split(','),
 			});
 
@@ -180,12 +196,14 @@
 		profile.displayName = data.name;
 		profile.emails = [{ value: data.email }];
 
+		if (data.confirmed_at == null) { return callback(new Error('Profile not confirmed. Please confirm your email address on Gitlab first!')); }
+
 		// Do you want to automatically make somebody an admin? This line might help you do that...
 		profile.isAdmin = data.is_admin ? true : false;
 
 		// Delete or comment out the next TWO (2) lines when you are ready to proceed
-		// process.stdout.write('===\nAt this point, you\'ll need to customise the above section to id, displayName, and emails into the "profile" object.\n===');
-		// return callback(new Error('Congrats! So far so good -- please see server log for details'));
+		/* process.stdout.write('===\nAt this point, you\'ll need to customise the above section to id, displayName, and emails into the "profile" object.\n===');
+		return callback(new Error('Congrats! So far so good -- please see server log for details')); */
 
 		// eslint-disable-next-line
 		callback(null, profile);
@@ -261,12 +279,37 @@
 			function (oAuthIdToDelete, next) {
 				db.deleteObjectField(constants.name + 'Id:uid', oAuthIdToDelete, next);
 			},
+			async.apply(db.deleteObjectField, 'user:' + data.uid, constants.name + 'Id'),
 		], function (err) {
 			if (err) {
 				winston.error('[sso-oauth] Could not remove OAuthId data for uid ' + data.uid + '. Error: ' + err);
 				return callback(err);
 			}
 
+			callback(null, data);
+		});
+	};
+
+	OAuth.getAssociation = function (data, callback) {
+		User.getUserField(data.uid, constants.name + 'Id', function (err, oauthId) {
+			if (err) {
+				return callback(err, data);
+			}
+			if (oauthId) {
+				data.associations.push({
+					associated: true,
+					name: constants.displayName,
+					icon: constants.icon,
+					deauthUrl: nconf.get('url') + '/deauth/' + constants.name,
+				});
+			} else {
+				data.associations.push({
+					associated: false,
+					url: nconf.get('url') + '/auth/' + constants.name,
+					name: constants.displayName,
+					icon: constants.icon,
+				});
+			}
 			callback(null, data);
 		});
 	};

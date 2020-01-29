@@ -5,8 +5,11 @@
 	"url": "https://github.com/openbnet/nodebb-plugin-sso-gitlab",
 	"library": "./library.js",
 	"hooks": [
+		{ "hook": "static:app.load", "method": "init" },
 		{ "hook": "static:user.delete", "method": "deleteUserData" },
 		{ "hook": "filter:user.whitelistFields", "method": "whitelistFields" },
-		{ "hook": "filter:auth.init", "method": "getStrategy" }
-	]
+		{ "hook": "filter:auth.init", "method": "getStrategy" },
+		{ "hook": "filter:auth.list", "method": "getAssociation" }
+	],
+	"templates": "./templates"
 }
